@@ -162,7 +162,7 @@ namespace Boxes
 
       public override void PostDrawInterface(SpriteBatch batch)
       {
-         if (Main.LocalPlayer.HeldItem.type == ModContent.ItemType<Items.Token>())
+         if (Main.LocalPlayer.HeldItem.type == ModContent.ItemType<Items.BoxSeller>())
          {
             int cost = GetCost();
             Color platColor = Color.White;

@@ -10,11 +10,12 @@ using Terraria.ID;
 
 namespace Boxes.Items
 {
-	public class Token : ModItem
+	public class BoxSeller : ModItem
 	{
       public override void SetStaticDefaults()
       {
-         Tooltip.SetDefault("Allows to buy boxes.");
+			DisplayName.SetDefault("Box Buying Interface");
+         Tooltip.SetDefault("Allows to buy boxes");
       }
       public override void SetDefaults()
       {
