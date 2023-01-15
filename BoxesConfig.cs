@@ -28,7 +28,7 @@ namespace Boxes
       [Label("Boxes per Increase")]
       public int boxesPerIncrease;
       [Label("Troll those who think outside the box")]
-      [Tooltip("Applies funny amount of debufs to those who dare to use hoiks to get to areas they weren't supposed to")]
+      [Tooltip("Applies funny amount of debuffs to those who dare to use hoiks to get to areas they weren't supposed to")]
       [DefaultValue(true)]
       public bool trollThinkingOutOfTheBox;
    }
