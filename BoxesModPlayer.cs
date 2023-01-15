@@ -56,7 +56,7 @@ namespace Boxes
                gridSystem.cellWidth, 
                ref pos.X, 
                ref velocity.X, 
-               Player.width, true);
+               Player.width);
 
          result = result || MoveIntoCell1D(
                int_cell_y, 
@@ -64,7 +64,7 @@ namespace Boxes
                gridSystem.cellHeight, 
                ref pos.Y,
                ref velocity.Y, 
-               Player.height, true);
+               Player.height);
 
          return result;
       }
