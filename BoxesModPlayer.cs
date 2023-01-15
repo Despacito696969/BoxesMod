@@ -16,7 +16,7 @@ namespace Boxes
             int cell_size, 
             ref float pos, 
             ref float velocity, 
-            int size, bool debug = false)
+            int size)
       {
          var center = (float)(base_cell_corner * 16);
          var cell = (float)(int_cell * 16);
@@ -29,14 +29,12 @@ namespace Boxes
          const float EPS2 = 0.05f; 
          if (too_much > -EPS2)
          {
-            if (debug) {Main.NewText("XD", 255, 0, 255);}
             pos -= too_much + EPS;
             velocity = 0.0f;
             result = true;
          }
          else if (too_little > -EPS2)
          {
-            if (debug) {Main.NewText("XD", 0, 255, 0);}
             pos += too_little + EPS;
             velocity = 0.0f;
             result = true;
@@ -113,11 +111,13 @@ namespace Boxes
          var gridSystem = ModContent.GetInstance<BoxesSystem>();
          Tuple<int, int>? goodCell;
          bool isInLockedBox;
+
          {
             var result = findBoxToPushTo(gridSystem, Player.position);
             goodCell = result.Item1;
             isInLockedBox = result.Item2;
          }
+
          if (isInLockedBox)
          {
             if (goodCell == null)
@@ -145,7 +145,7 @@ namespace Boxes
                      gridSystem.cellHeight, 
                      ref Player.position.Y, 
                      ref delta.Y, 
-                     Player.height, true))
+                     Player.height))
                {
                   Player.velocity.Y = 0.0f;
                }
