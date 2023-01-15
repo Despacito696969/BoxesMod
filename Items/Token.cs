@@ -20,7 +20,7 @@ namespace Boxes.Items
       {
          Item.width = 20;
          Item.height = 20;
-         Item.maxStack = 999999999;
+         Item.maxStack = 1;
          Item.value = 0;
          Item.rare = ItemRarityID.Blue;
          Item.consumable = false;
