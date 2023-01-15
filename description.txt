@@ -1,0 +1,9 @@
+Basically HappyDays' grid challenge, but as a mod and configurable.
+WARNING: It doesn't support multiplayer.
+
+You start in a single rectangular box that you cannot escape. You can buy a neighbouring box, but the more boxes you buy the more they cost.
+To buy boxes you need to use token, which is crafted for free.
+
+You can configure box size, base cost, cost increase and boxes per cost increase.
+
+Also might have buggy collisions in some funny cases, because I couldn't find a good way to do collision resolution with just the tModLoader hooks.
