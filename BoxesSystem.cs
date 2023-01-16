@@ -240,19 +240,13 @@ namespace Boxes
          }
       }
       public override void SaveWorldData(TagCompound tag)
-      {
-         //var Logger = ModContent.GetInstance<Boxes>().Logger;
-         //Logger.Info("Started saving!");
+      {  
          var list = new List<Tuple<int, int>>();
-         //Logger.Info("Made a list");
          foreach (var element in unlockedCells)
          {
-            //Logger.InfoFormat("Saved {0}", element);
             list.Add(element);
          }
-         //Logger.Info("Completed the list");
          tag.Add(WORLD_CELLS, list);
-         //Logger.Info("Saved the list");
       }
       public class PointSerializer : TagSerializer<Tuple<int, int>, TagCompound>
       {
