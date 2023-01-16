@@ -1,12 +1,8 @@
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using Terraria.ModLoader;
 using Terraria.ID;
-using System.Collections.Generic;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ID;
 
 namespace Boxes.Items
 {

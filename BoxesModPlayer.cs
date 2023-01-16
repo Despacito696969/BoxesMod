@@ -1,10 +1,9 @@
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Terraria.ModLoader;
 using Terraria.ID;
-using System.Collections.Generic;
 using System;
 using Terraria;
+using MonoMod.Cil;
 
 namespace Boxes
 {
@@ -101,7 +100,7 @@ namespace Boxes
           oldPosition = Player.position;
       }
 
-      public override void PostUpdate()
+      public void BoxCollision()
       {
          // Previously this was just in PreUpdateMovement, 
          // but it had more issues than this workaround.
@@ -148,6 +147,7 @@ namespace Boxes
                      Player.height))
                {
                   Player.velocity.Y = 0.0f;
+                  Player.gfxOffY = 0.0f;
                }
                if (findBoxToPushTo(gridSystem, Player.position).Item2)
                {
@@ -169,6 +169,7 @@ namespace Boxes
 
          var prevBox = gridSystem.getCell(Player.Center);
          var copyPos = Player.position;
+         var predicted = Player.position + delta;
 
          copyPos.X += delta.X;
 
@@ -205,9 +206,28 @@ namespace Boxes
             {
                Player.position.Y = copyPos.Y;
                Player.velocity.Y = 0.0f;
+               Player.gfxOffY = 0.0f;
             }
          }
          Player.position += delta;
+         predicted -= Player.position;
       }
-	}
+
+      // This needs to be IL Editted because there is no way to update collision
+      // before PlayerFrame and after actual collision
+      public override void Load()
+      {
+         IL.Terraria.Player.BordersMovement += boxUpdateIL;
+      }
+
+      private void boxUpdateIL(ILContext il)
+      {
+         var c = new ILCursor(il);
+         c.Emit(Mono.Cecil.Cil.OpCodes.Ldarg_0);
+         c.EmitDelegate<Action<Player>>((player) =>
+         {
+            player.GetModPlayer<BoxesModPlayer>().BoxCollision();
+         });
+      }
+   }
 }
