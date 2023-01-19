@@ -169,7 +169,6 @@ namespace Boxes
 
          var prevBox = gridSystem.getCell(Player.Center);
          var copyPos = Player.position;
-         var predicted = Player.position + delta;
 
          copyPos.X += delta.X;
 
@@ -210,7 +209,6 @@ namespace Boxes
             }
          }
          Player.position += delta;
-         predicted -= Player.position;
       }
 
       // This needs to be IL Editted because there is no way to update collision

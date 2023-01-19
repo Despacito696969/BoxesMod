@@ -44,7 +44,7 @@ namespace Boxes.Items
       {
          var gridSystem = ModContent.GetInstance<BoxesSystem>();
          var checkedPos = getChoosenGrid();
-         if (!gridSystem.unlockedCells.Contains(checkedPos) && player.CanBuyItem(gridSystem.GetCost()))
+         if (!gridSystem.unlockedCells.Contains(checkedPos) && player.CanBuyItem(gridSystem.getCost()))
          {
             if (
                !gridSystem.unlockedCells.Contains(new Tuple<int, int>(checkedPos.Item1 - 1, checkedPos.Item2)) &&
@@ -54,9 +54,22 @@ namespace Boxes.Items
             {
                return null;
             }
-            player.BuyItem(gridSystem.GetCost());
-            gridSystem.unlockedCells.Add(checkedPos);
-            SoundEngine.PlaySound(SoundID.Item4, player.position);
+            player.BuyItem(gridSystem.getCost());
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+               gridSystem.unlockedCells.Add(checkedPos);
+               SoundEngine.PlaySound(SoundID.Item4, player.position);
+            }
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+               var packet = ModContent.GetInstance<Boxes>().GetPacket();
+               packet.Write((byte)Packet.OnItemUseSync);
+               packet.Write((int)checkedPos.Item1);
+               packet.Write((int)checkedPos.Item2);
+               packet.Write((int)player.position.X);
+               packet.Write((int)player.position.Y);
+               packet.Send();
+            }
          }
          return null;
       }

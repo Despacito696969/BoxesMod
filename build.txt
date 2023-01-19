@@ -1,4 +1,4 @@
 displayName = Box Challenge
 author = Despacito696969
-version = 0.2
+version = 0.3
 homepage = https://github.com/Despacito696969/BoxesMod
