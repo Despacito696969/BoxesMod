@@ -88,6 +88,19 @@ namespace Boxes
          return unlockedCells.Contains(new Tuple<int, int>(x, y));
       }
 
+      public static Tuple<int, int> getChoosenGrid(int tileX, int tileY)
+      {
+         var x = tileX;
+         var y = tileY;
+
+         var gridSystem = ModContent.GetInstance<BoxesSystem>();
+         x -= gridSystem.baseCellCornerX;
+         y -= gridSystem.baseCellCornerY;
+         int cell_x = (int)Math.Floor((float)x / (float)gridSystem.cellWidth);
+         int cell_y = (int)Math.Floor((float)y / (float)gridSystem.cellHeight);
+         return new Tuple<int, int>(cell_x, cell_y);
+      }
+
       public void DrawBorders()
       {
          var screenPos = Main.screenPosition - new Vector2((float)baseCellCornerX, (float)baseCellCornerY) * 16.0f;
@@ -95,6 +108,32 @@ namespace Boxes
          int y_min = (int)Math.Floor((float)screenPos.Y / (float)(cellHeight * 16));
          int x_max = (int)Math.Floor((float)(screenPos.X + Main.screenWidth) / (float)(cellWidth * 16));
          int y_max = (int)Math.Floor((float)(screenPos.Y + Main.screenHeight) / (float)(cellHeight * 16));
+
+         if (Main.LocalPlayer.HeldItem.type == ModContent.ItemType<Items.BoxSeller>()) {
+            var grid = BoxesSystem.getChoosenGrid(Player.tileTargetX, Player.tileTargetY);
+            var g_x = grid.Item1;
+            var g_y = grid.Item2;
+            if (!hasBox(g_x, g_y) &&
+               (hasBox(g_x, g_y + 1) || hasBox(g_x, g_y - 1)
+               || hasBox(g_x + 1, g_y) || hasBox(g_x - 1, g_y))) { 
+
+               var pos = new Vector2(
+                     (float)(baseCellCornerX + g_x * cellWidth), 
+                     (float)(baseCellCornerY + g_y * cellHeight));
+
+               pos = pos * 16.0f - Main.screenPosition;
+
+               var pos_x = (int)pos.X;
+               var pos_y = (int)pos.Y;
+               var width = cellWidth * 16;
+               var height = cellHeight * 16;
+
+               Main.spriteBatch.Draw(
+                     TextureAssets.MagicPixel.Value, 
+                     new Rectangle(pos_x, pos_y, width, height), null, 
+                     Color.Lerp(Color.Transparent, Color.Green, 0.2f));
+            }
+         }
          for (int x = x_min; x <= x_max; ++x)
          {
             for (int y = y_min; y <= y_max; ++y)

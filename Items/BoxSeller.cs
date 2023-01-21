@@ -28,22 +28,10 @@ namespace Boxes.Items
       {
          CreateRecipe().Register();
       }
-      public Tuple<int, int> getChoosenGrid()
-      {
-         var x = Player.tileTargetX;
-         var y = Player.tileTargetY;
-
-         var gridSystem = ModContent.GetInstance<BoxesSystem>();
-         x -= gridSystem.baseCellCornerX;
-         y -= gridSystem.baseCellCornerY;
-         int cell_x = (int)Math.Floor((float)x / (float)gridSystem.cellWidth);
-         int cell_y = (int)Math.Floor((float)y / (float)gridSystem.cellHeight);
-         return new Tuple<int, int>(cell_x, cell_y);
-      }
       public override bool? UseItem(Player player)
       {
          var gridSystem = ModContent.GetInstance<BoxesSystem>();
-         var checkedPos = getChoosenGrid();
+         var checkedPos = BoxesSystem.getChoosenGrid(Player.tileTargetX, Player.tileTargetY);
          if (!gridSystem.unlockedCells.Contains(checkedPos) && player.CanBuyItem(gridSystem.getCost()))
          {
             if (
