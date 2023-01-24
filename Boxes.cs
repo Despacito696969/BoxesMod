@@ -75,10 +75,12 @@ namespace Boxes
 
                case Packet.OnItemUseSync:
                {
+                  var cells = ModContent.GetInstance<BoxesSystem>().unlockedCells;
                   int x = reader.ReadInt32();
                   int y = reader.ReadInt32();
                   int px = reader.ReadInt32();
                   int py = reader.ReadInt32();
+                  cells.Add(new Tuple<int, int>(x, y));
                   var packet = GetPacket();
                   packet.Write((byte)Packet.OnItemUseSync);
                   packet.Write((int)x);
