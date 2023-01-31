@@ -12,7 +12,8 @@ namespace Boxes
    enum Packet : byte
    {
       OnJoinSync,
-      OnItemUseSync,
+      OnCreateBox,
+      OnDestroyBox,
    }
 
    public class Boxes : Mod
@@ -41,7 +42,7 @@ namespace Boxes
                }
                break;
 
-               case Packet.OnItemUseSync:
+               case Packet.OnCreateBox:
                {
                   var cells = ModContent.GetInstance<BoxesSystem>().unlockedCells;
                   int x = reader.ReadInt32();
@@ -50,6 +51,18 @@ namespace Boxes
                   int py = reader.ReadInt32();
                   cells.Add(new Tuple<int, int>(x, y));
                   SoundEngine.PlaySound(SoundID.Item4, new Vector2((float)px, (float)py));
+               }
+               break;
+
+               case Packet.OnDestroyBox:
+               {
+                  var cells = ModContent.GetInstance<BoxesSystem>().unlockedCells;
+                  int x = reader.ReadInt32();
+                  int y = reader.ReadInt32();
+                  int px = reader.ReadInt32();
+                  int py = reader.ReadInt32();
+                  cells.Remove(new Tuple<int, int>(x, y));
+                  SoundEngine.PlaySound(SoundID.Item14, new Vector2((float)px, (float)py));
                }
                break;
             }
@@ -73,16 +86,44 @@ namespace Boxes
                }
                break;
 
-               case Packet.OnItemUseSync:
+               case Packet.OnCreateBox:
                {
-                  var cells = ModContent.GetInstance<BoxesSystem>().unlockedCells;
+                  var boxesSystem = ModContent.GetInstance<BoxesSystem>();
+                  var cells = boxesSystem.unlockedCells;
                   int x = reader.ReadInt32();
                   int y = reader.ReadInt32();
                   int px = reader.ReadInt32();
                   int py = reader.ReadInt32();
+                  if (!boxesSystem.isBoxBuyable(x, y))
+                  {
+                     break;
+                  }
                   cells.Add(new Tuple<int, int>(x, y));
                   var packet = GetPacket();
-                  packet.Write((byte)Packet.OnItemUseSync);
+                  packet.Write((byte)Packet.OnCreateBox);
+                  packet.Write((int)x);
+                  packet.Write((int)y);
+                  packet.Write((int)px);
+                  packet.Write((int)py);
+                  packet.Send();
+               }
+               break;
+
+               case Packet.OnDestroyBox:
+               {
+                  var boxesSystem = ModContent.GetInstance<BoxesSystem>();
+                  var cells = boxesSystem.unlockedCells;
+                  int x = reader.ReadInt32();
+                  int y = reader.ReadInt32();
+                  int px = reader.ReadInt32();
+                  int py = reader.ReadInt32();
+                  if (!boxesSystem.hasBox(x, y))
+                  { 
+                     break; 
+                  }
+                  cells.Remove(new Tuple<int, int>(x, y));
+                  var packet = GetPacket();
+                  packet.Write((byte)Packet.OnDestroyBox);
                   packet.Write((int)x);
                   packet.Write((int)y);
                   packet.Write((int)px);

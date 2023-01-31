@@ -7,12 +7,12 @@ using System.Collections.Generic;
 
 namespace Boxes.Items
 {
-	public class BoxSeller : ModItem
+	public class BoxRemover: ModItem
 	{
       public override void SetStaticDefaults()
       {
-			DisplayName.SetDefault("Box Buying Interface");
-         Tooltip.SetDefault("Allows to buy boxes");
+			DisplayName.SetDefault("Box Remover");
+         Tooltip.SetDefault("Allows to remove boxes");
       }
 
       public override void SetDefaults()
@@ -21,49 +21,27 @@ namespace Boxes.Items
          Item.height = 20;
          Item.maxStack = 1;
          Item.value = 0;
-         Item.rare = ItemRarityID.Blue;
+         Item.rare = ItemRarityID.Red;
          Item.consumable = false;
          Item.useStyle = ItemUseStyleID.HoldUp;
          Item.useTime = 0;
-      }
-      public override void ModifyTooltips(List<TooltipLine> tooltips)
-      {
-         var mod = ModContent.GetInstance<Boxes>();
-         if (tooltips[tooltips.Count - 1].Name == "CostLine") 
-         {
-            tooltips.RemoveAt(tooltips.Count - 1);
-         }
-         var boxesSystem = ModContent.GetInstance<BoxesSystem>();
-         tooltips.Add(new TooltipLine(mod, "CostLine", 
-            "Next box will cost: " + boxesSystem.getCostString()));
-      }
-
-
-      public override void AddRecipes()
-      {
-         CreateRecipe().Register();
       }
 
       public override bool? UseItem(Player player)
       {
          var gridSystem = ModContent.GetInstance<BoxesSystem>();
          var checkedPos = BoxesSystem.getChoosenGrid(Player.tileTargetX, Player.tileTargetY);
-         if (!gridSystem.unlockedCells.Contains(checkedPos) && player.CanBuyItem(gridSystem.getCost()))
+         if (gridSystem.unlockedCells.Contains(checkedPos))
          {
-            if (!gridSystem.isBoxBuyable(checkedPos.Item1, checkedPos.Item2))
-            {
-               return null;
-            }
-            player.BuyItem(gridSystem.getCost());
             if (Main.netMode == NetmodeID.SinglePlayer)
             {
-               gridSystem.unlockedCells.Add(checkedPos);
-               SoundEngine.PlaySound(SoundID.Item4, player.position);
+               gridSystem.unlockedCells.Remove(checkedPos);
+               SoundEngine.PlaySound(SoundID.Item14, player.position);
             }
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                var packet = ModContent.GetInstance<Boxes>().GetPacket();
-               packet.Write((byte)Packet.OnCreateBox);
+               packet.Write((byte)Packet.OnDestroyBox);
                packet.Write((int)checkedPos.Item1);
                packet.Write((int)checkedPos.Item2);
                packet.Write((int)player.position.X);

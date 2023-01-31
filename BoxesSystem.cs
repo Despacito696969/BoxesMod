@@ -91,10 +91,11 @@ namespace Boxes
 
       public bool isBoxBuyable(int x, int y)
       {
-         return !(!unlockedCells.Contains(new Tuple<int, int>(x - 1, y)) &&
-                  !unlockedCells.Contains(new Tuple<int, int>(x + 1, y)) &&
-                  !unlockedCells.Contains(new Tuple<int, int>(x, y - 1)) &&
-                  !unlockedCells.Contains(new Tuple<int, int>(x, y + 1)));
+         return !(!hasBox(x, y) &&
+                  !hasBox(x - 1, y) &&
+                  !hasBox(x + 1, y) &&
+                  !hasBox(x, y - 1) &&
+                  !hasBox(x, y + 1));
       }
 
       public static Tuple<int, int> getChoosenGrid(int tileX, int tileY)
@@ -230,64 +231,6 @@ namespace Boxes
                }
             }
          }
-      }
-
-      // This doesn't work (for now atleast)
-      public void PostDrawTilesNewProbably()
-      {
-         List<VertexPositionColor> verts_list = new List<VertexPositionColor>();
-         List<int> indices_list = new List<int>();
-         
-         var screenPos = Main.screenPosition - new Vector2((float)baseCellCornerX, (float)baseCellCornerY) * 16.0f;
-         int x_min = (int)Math.Floor((float)screenPos.X / (float)(cellWidth * 16));
-         int y_min = (int)Math.Floor((float)screenPos.Y / (float)(cellHeight * 16));
-         int x_max = (int)Math.Floor((float)(screenPos.X + Main.screenWidth) / (float)(cellWidth * 16));
-         int y_max = (int)Math.Floor((float)(screenPos.Y + Main.screenHeight) / (float)(cellHeight * 16));
-         for (int x = x_min; x <= x_max; ++x)
-         {
-            for (int y = y_min; y <= y_max; ++y)
-            {
-               int box_x = x;
-               int box_y = y;
-
-               if (unlockedCells.Contains(new Tuple<int, int>(x, y)))
-               {
-                  continue;
-               }
-
-               var pos = new Vector2(
-                     (float)(baseCellCornerX + box_x * cellWidth), 
-                     (float)(baseCellCornerY + box_y * cellHeight));
-               pos = pos * 16.0f - Main.screenPosition;
-
-               VertexPositionColor[] verts = new VertexPositionColor[4];
-
-               verts[0].Position = new Vector3((float)pos.X, (float)pos.Y, (float)0);
-               verts[1].Position = verts[0].Position;
-               verts[1].Position.X += (float)cellWidth * 16.0f;
-
-               verts[2].Position = verts[1].Position;
-               verts[2].Position.Y += cellHeight * 16.0f;
-               verts[3].Position = verts[0].Position;
-               verts[3].Position.Y += cellHeight * 16.0f;
-
-               verts[0].Color = new Color(1, 0, 0, 1);
-               verts[1].Color = new Color(0, 1, 0, 1);
-               verts[2].Color = new Color(0, 0, 1, 1);
-               verts[3].Color = new Color(0, 1, 1, 1);
-
-               int[] indices = new int[] { 1, 0, 2, 3, 2, 0 };
-               foreach (var index in indices)
-               {
-                  indices_list.Add(index + verts_list.Count);
-               }
-               verts_list.AddRange(verts);
-            }
-         }
-         device.DrawUserIndexedPrimitives<VertexPositionColor>(
-            PrimitiveType.TriangleList,
-            verts_list.ToArray(), 0, verts_list.Count,
-            indices_list.ToArray(), 0, indices_list.Count);
       }
 
       public string getCostString()
