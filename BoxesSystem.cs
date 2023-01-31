@@ -292,14 +292,26 @@ namespace Boxes
             Color silverColor = Color.Gray;
             float lineDist = 30.0f;
             float linePos = lineDist;
+
+            var gridSystem = ModContent.GetInstance<BoxesSystem>();
+            var checkedPos = BoxesSystem.getChoosenGrid(Player.tileTargetX, Player.tileTargetY);
+            if (gridSystem.unlockedCells.Contains(checkedPos)) {
+               Utils.DrawBorderString(
+                     batch,
+                     "Select a box",
+                     new Vector2((float)Main.mouseX, (float)Main.mouseY - linePos),
+                     Color.Linen);
+               return;
+            }
+
             bool cantAfford = !Main.LocalPlayer.CanBuyItem(cost);
             if (cantAfford)
             {
                platColor = Color.Red;
                goldColor = Color.Red;
                silverColor = Color.Red;
-
             }
+
             int to_display;
             to_display = ((cost / 100) % 100);
             if (to_display > 0)
