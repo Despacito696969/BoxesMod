@@ -3,6 +3,7 @@ using Terraria.ID;
 using System;
 using Terraria;
 using Terraria.Audio;
+using System.Collections.Generic;
 
 namespace Boxes.Items
 {
@@ -13,6 +14,7 @@ namespace Boxes.Items
 			DisplayName.SetDefault("Box Buying Interface");
          Tooltip.SetDefault("Allows to buy boxes");
       }
+
       public override void SetDefaults()
       {
          Item.width = 20;
@@ -24,21 +26,31 @@ namespace Boxes.Items
          Item.useStyle = ItemUseStyleID.HoldUp;
          Item.useTime = 0;
       }
+      public override void ModifyTooltips(List<TooltipLine> tooltips)
+      {
+         var mod = ModContent.GetInstance<Boxes>();
+         if (tooltips[tooltips.Count - 1].Name == "CostLine") 
+         {
+            tooltips.RemoveAt(tooltips.Count - 1);
+         }
+         var boxesSystem = ModContent.GetInstance<BoxesSystem>();
+         tooltips.Add(new TooltipLine(mod, "CostLine", 
+            "Next box will cost: " + boxesSystem.getCostString()));
+      }
+
+
       public override void AddRecipes()
       {
          CreateRecipe().Register();
       }
+
       public override bool? UseItem(Player player)
       {
          var gridSystem = ModContent.GetInstance<BoxesSystem>();
          var checkedPos = BoxesSystem.getChoosenGrid(Player.tileTargetX, Player.tileTargetY);
          if (!gridSystem.unlockedCells.Contains(checkedPos) && player.CanBuyItem(gridSystem.getCost()))
          {
-            if (
-               !gridSystem.unlockedCells.Contains(new Tuple<int, int>(checkedPos.Item1 - 1, checkedPos.Item2)) &&
-               !gridSystem.unlockedCells.Contains(new Tuple<int, int>(checkedPos.Item1 + 1, checkedPos.Item2)) &&
-               !gridSystem.unlockedCells.Contains(new Tuple<int, int>(checkedPos.Item1, checkedPos.Item2 - 1)) &&
-               !gridSystem.unlockedCells.Contains(new Tuple<int, int>(checkedPos.Item1, checkedPos.Item2 + 1)))
+            if (!gridSystem.isBoxBuyable(checkedPos.Item1, checkedPos.Item2))
             {
                return null;
             }

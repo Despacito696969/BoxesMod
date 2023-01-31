@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System;
 using MonoMod.Cil;
 using Terraria.ID;
+using System.Text;
 
 namespace Boxes
 {
@@ -86,6 +87,14 @@ namespace Boxes
       public bool hasBox(int x, int y) 
       {
          return unlockedCells.Contains(new Tuple<int, int>(x, y));
+      }
+
+      public bool isBoxBuyable(int x, int y)
+      {
+         return !(!unlockedCells.Contains(new Tuple<int, int>(x - 1, y)) &&
+                  !unlockedCells.Contains(new Tuple<int, int>(x + 1, y)) &&
+                  !unlockedCells.Contains(new Tuple<int, int>(x, y - 1)) &&
+                  !unlockedCells.Contains(new Tuple<int, int>(x, y + 1)));
       }
 
       public static Tuple<int, int> getChoosenGrid(int tileX, int tileY)
@@ -281,15 +290,39 @@ namespace Boxes
             indices_list.ToArray(), 0, indices_list.Count);
       }
 
+      public string getCostString()
+      { 
+         int cost = getCost();
+         int silver = ((cost / 100) % 100);
+         int gold = ((cost / 100 / 100) % 100);
+         int platinum = (cost / 100 / 100 / 100);
+         StringBuilder sb = new StringBuilder();
+
+         Action<int, int> addCoin = (value, id) =>
+         {
+            if (value == 0)
+            {
+               return;
+            }
+            sb.Append("[i/s");
+            sb.Append(value);
+            sb.Append(':');
+            sb.Append(id);
+            sb.Append(']');
+         };
+
+         addCoin(platinum, ItemID.PlatinumCoin);
+         addCoin(gold, ItemID.GoldCoin);
+         addCoin(silver, ItemID.SilverCoin);
+         return sb.ToString();
+      }
+
       public override void PostDrawInterface(SpriteBatch batch)
       {
          if (Main.dedServ) { return; }
          if (Main.LocalPlayer.HeldItem.type == ModContent.ItemType<Items.BoxSeller>())
          {
             int cost = getCost();
-            Color platColor = Color.White;
-            Color goldColor = Color.Gold;
-            Color silverColor = Color.Gray;
             float lineDist = 30.0f;
             float linePos = lineDist;
 
@@ -305,55 +338,38 @@ namespace Boxes
             }
 
             bool cantAfford = !Main.LocalPlayer.CanBuyItem(cost);
-            if (cantAfford)
-            {
-               platColor = Color.Red;
-               goldColor = Color.Red;
-               silverColor = Color.Red;
-            }
 
-            int to_display;
-            to_display = ((cost / 100) % 100);
-            if (to_display > 0)
+            if (gridSystem.isBoxBuyable(checkedPos.Item1, checkedPos.Item2))
             {
+               if (cantAfford)
+               {
+                  Utils.DrawBorderString(
+                        batch,
+                        "You need: " + getCostString(),
+                        new Vector2((float)Main.mouseX, (float)Main.mouseY - linePos),
+                        Color.Red);
+                  linePos += lineDist;
+               }
+               else
+               {
+                  Utils.DrawBorderString(
+                        batch,
+                        "Buy: " + getCostString(),
+                        new Vector2((float)Main.mouseX, (float)Main.mouseY - linePos),
+                        Color.White);
+                  linePos += lineDist;
+               }
+            }
+            else
+            { 
                Utils.DrawBorderString(
                      batch,
-                     to_display.ToString() + " Silver",
-                     new Vector2((float)Main.mouseX, (float)Main.mouseY - linePos),
-                     silverColor);
-               linePos += lineDist;
-            }
-
-            to_display = ((cost / 100 / 100) % 100);
-            if (to_display > 0)
-            {
-               Utils.DrawBorderString(
-                     batch,
-                     ((cost / 100 / 100) % 100).ToString() + " Gold",
-                     new Vector2((float)Main.mouseX, (float)Main.mouseY - linePos),
-                     goldColor);
-               linePos += lineDist;
-            }
-
-            to_display = (cost / 100 / 100 / 100);
-            if (to_display > 0)
-            {
-               Utils.DrawBorderString(
-                     batch,
-                     to_display.ToString() + " Platinum",
-                     new Vector2((float)Main.mouseX, (float)Main.mouseY - linePos),
-                     platColor);
-               linePos += lineDist;
-            }
-
-            if (cantAfford)
-            {
-               Utils.DrawBorderString(
-                     batch,
-                     "You need:",
+                     "You can only buy neighbouring boxes",
                      new Vector2((float)Main.mouseX, (float)Main.mouseY - linePos),
                      Color.Red);
+               linePos += lineDist;
             }
+
          }
       }
 
