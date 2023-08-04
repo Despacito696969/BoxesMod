@@ -7,14 +7,8 @@ using System.Collections.Generic;
 
 namespace Boxes.Items
 {
-	public class BoxSeller : ModItem
-	{
-      public override void SetStaticDefaults()
-      {
-			DisplayName.SetDefault("Box Buying Interface");
-         Tooltip.SetDefault("Allows to buy boxes");
-      }
-
+   public class BoxSeller : ModItem
+   {
       public override void SetDefaults()
       {
          Item.width = 20;
@@ -24,18 +18,19 @@ namespace Boxes.Items
          Item.rare = ItemRarityID.Blue;
          Item.consumable = false;
          Item.useStyle = ItemUseStyleID.HoldUp;
-         Item.useTime = 0;
+         Item.useTime = 20;
+         Item.useAnimation = 15;
+         Item.autoReuse = false;
       }
       public override void ModifyTooltips(List<TooltipLine> tooltips)
       {
          var mod = ModContent.GetInstance<Boxes>();
-         if (tooltips[tooltips.Count - 1].Name == "CostLine") 
+         if (tooltips[tooltips.Count - 1].Name == "CostLine")
          {
             tooltips.RemoveAt(tooltips.Count - 1);
          }
          var boxesSystem = ModContent.GetInstance<BoxesSystem>();
-         tooltips.Add(new TooltipLine(mod, "CostLine", 
-            "Next box will cost: " + boxesSystem.getCostString()));
+         tooltips.Add(new TooltipLine(mod, "CostLine", "Next box will cost: " + boxesSystem.getCostString()));
       }
 
 
@@ -48,11 +43,11 @@ namespace Boxes.Items
       {
          var gridSystem = ModContent.GetInstance<BoxesSystem>();
          var checkedPos = BoxesSystem.getChoosenGrid(Player.tileTargetX, Player.tileTargetY);
-         if (!gridSystem.unlockedCells.Contains(checkedPos) && player.CanBuyItem(gridSystem.getCost()))
+         if (!gridSystem.unlockedCells.Contains(checkedPos) && player.CanAfford(gridSystem.getCost()))
          {
             if (!gridSystem.isBoxBuyable(checkedPos.Item1, checkedPos.Item2))
             {
-               return null;
+               return true;
             }
             player.BuyItem(gridSystem.getCost());
             if (Main.netMode == NetmodeID.SinglePlayer)
@@ -71,7 +66,7 @@ namespace Boxes.Items
                packet.Send();
             }
          }
-         return null;
+         return true;
       }
    }
 }

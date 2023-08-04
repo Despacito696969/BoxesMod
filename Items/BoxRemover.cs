@@ -7,14 +7,8 @@ using System.Collections.Generic;
 
 namespace Boxes.Items
 {
-	public class BoxRemover: ModItem
-	{
-      public override void SetStaticDefaults()
-      {
-			DisplayName.SetDefault("Box Remover");
-         Tooltip.SetDefault("Allows to remove boxes");
-      }
-
+   public class BoxRemover: ModItem
+   {
       public override void SetDefaults()
       {
          Item.width = 20;
@@ -24,7 +18,9 @@ namespace Boxes.Items
          Item.rare = ItemRarityID.Red;
          Item.consumable = false;
          Item.useStyle = ItemUseStyleID.HoldUp;
-         Item.useTime = 0;
+         Item.useTime = 20;
+         Item.useAnimation = 15;
+         Item.autoReuse = false;
       }
 
       public override bool? UseItem(Player player)
@@ -49,7 +45,7 @@ namespace Boxes.Items
                packet.Send();
             }
          }
-         return null;
+         return true;
       }
    }
 }

@@ -215,7 +215,7 @@ namespace Boxes
       // before PlayerFrame and after actual collision
       public override void Load()
       {
-         IL.Terraria.Player.BordersMovement += boxUpdateIL;
+         Terraria.IL_Player.BordersMovement += boxUpdateIL;
       }
 
       private void boxUpdateIL(ILContext il)

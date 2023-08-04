@@ -23,7 +23,7 @@ namespace Boxes
       public override void Load()
       {
          if (Main.dedServ) { return; }
-         IL.Terraria.Main.DrawInfernoRings += DrawBordersILEdit;
+         Terraria.IL_Main.DrawInfernoRings += DrawBordersILEdit;
          device = Main.instance.GraphicsDevice;
       }
 
@@ -280,7 +280,7 @@ namespace Boxes
                return;
             }
 
-            bool cantAfford = !Main.LocalPlayer.CanBuyItem(cost);
+            bool cantAfford = !Main.LocalPlayer.CanAfford(cost);
 
             if (gridSystem.isBoxBuyable(checkedPos.Item1, checkedPos.Item2))
             {

@@ -1,0 +1,51 @@
+Mods: {
+	Boxes: {
+		Items: {
+			BoxRemover: {
+				DisplayName: Box Remover
+				Tooltip: Allows to remove boxes
+			}
+
+			BoxSeller: {
+				DisplayName: Box Buying Interface
+				Tooltip: Allows to buy boxes
+			}
+		}
+
+		Configs: {
+			BoxesConfig: {
+				trollThinkingOutOfTheBox: {
+					Tooltip: Applies funny amount of debuffs to those who dare to leave the box
+					Label: Troll those who think outside the box
+				}
+
+				boxesPerIncrease: {
+					Tooltip: ""
+					Label: Boxes per Increase
+				}
+
+				costIncreaseSilver: {
+					Tooltip: ""
+					Label: Base Cost Increase (in silver coins)
+				}
+
+				costSilver: {
+					Tooltip: ""
+					Label: Base Cost (in silver coins)
+				}
+
+				BoxHeight: {
+					Tooltip: ""
+					Label: Box Height (in tiles)
+				}
+
+				BoxWidth: {
+					Tooltip: ""
+					Label: Box Width (in tiles)
+				}
+
+				DisplayName: Boxes Config
+			}
+		}
+	}
+}

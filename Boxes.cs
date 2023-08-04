@@ -1,4 +1,3 @@
-using IL.Terraria;
 using System.IO;
 using Terraria.ID;
 using Terraria.ModLoader;
